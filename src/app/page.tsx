@@ -153,27 +153,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Tech Stack */}
-      <section className="relative z-10 px-6 lg:px-12 py-12 max-w-4xl mx-auto">
-        <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold text-gradient mb-2">Tech Stack</h2>
-          <p className="text-sm text-muted-foreground">Built with modern, production-ready technologies</p>
-        </div>
-        <div className="flex flex-wrap justify-center gap-3">
-          {[
-            'Next.js 14', 'TypeScript', 'Supabase', 'PostgreSQL', 'Tailwind CSS',
-            'shadcn/ui', 'Recharts', 'Playwright', 'Jest', 'Vercel',
-          ].map((tech) => (
-            <span
-              key={tech}
-              className="px-4 py-2 rounded-full text-xs font-medium border border-border/40 bg-card/30 frost text-foreground/70 hover:text-foreground hover:border-primary/30 transition-colors"
-            >
-              {tech}
-            </span>
-          ))}
-        </div>
-      </section>
-
       {/* CTA */}
       <section className="relative z-10 px-6 lg:px-12 py-16 max-w-4xl mx-auto text-center">
         <div className="rounded-2xl bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/20 p-10">
