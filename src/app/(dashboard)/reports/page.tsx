@@ -1,8 +1,9 @@
 import { requireAuth } from '@/lib/auth';
 import { PageHeader } from '@/components/shared/page-header';
 import { Card, CardContent } from '@/components/ui/card';
-import { ClipboardCheck, BookOpen, CreditCard, ChevronRight } from 'lucide-react';
+import { ClipboardCheck, BookOpen, CreditCard, ChevronRight, Users, FileText, UserPlus, Library, Bus, Wallet, Download } from 'lucide-react';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 const reports = [
   {
@@ -26,6 +27,48 @@ const reports = [
     icon: CreditCard,
     gradient: 'from-amber-500 to-orange-500',
   },
+  {
+    title: 'Student Report',
+    description: 'Student enrollment, demographics, and class distribution.',
+    href: '/students',
+    icon: Users,
+    gradient: 'from-pink-500 to-rose-500',
+  },
+  {
+    title: 'Examination Results',
+    description: 'Exam scores, pass rates, and performance analytics.',
+    href: '/examinations',
+    icon: FileText,
+    gradient: 'from-emerald-500 to-green-500',
+  },
+  {
+    title: 'Admissions Report',
+    description: 'Application status, acceptance rates, and enrollment pipeline.',
+    href: '/admissions',
+    icon: UserPlus,
+    gradient: 'from-blue-500 to-indigo-500',
+  },
+  {
+    title: 'Library Usage',
+    description: 'Book circulation, popular titles, and overdue tracking.',
+    href: '/library',
+    icon: Library,
+    gradient: 'from-purple-500 to-violet-500',
+  },
+  {
+    title: 'Transport Report',
+    description: 'Route utilization, vehicle capacity, and student assignments.',
+    href: '/transport',
+    icon: Bus,
+    gradient: 'from-teal-500 to-cyan-500',
+  },
+  {
+    title: 'Payroll Summary',
+    description: 'Salary disbursements, deductions, and payment history.',
+    href: '/payroll',
+    icon: Wallet,
+    gradient: 'from-orange-500 to-red-500',
+  },
 ];
 
 export default async function ReportsPage() {
@@ -33,7 +76,14 @@ export default async function ReportsPage() {
 
   return (
     <>
-      <PageHeader title="Reports" description="Access various school reports" />
+      <PageHeader title="Reports" description="Access various school reports">
+        <Button variant="outline" size="sm" asChild>
+          <Link href="/reports/export">
+            <Download className="mr-1.5 h-3.5 w-3.5" />
+            Export Data
+          </Link>
+        </Button>
+      </PageHeader>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {reports.map((report) => (

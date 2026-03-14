@@ -655,6 +655,313 @@ Each student may register for a maximum of 3 events. Forms available with your P
 
     await supabase.from('announcements').insert(announcements);
 
+    // ── Step 14: Timetable (Mon-Fri, 8 periods/class) ────
+    const periods = [
+      { start: '08:00', end: '08:45' },
+      { start: '08:50', end: '09:35' },
+      { start: '09:40', end: '10:25' },
+      { start: '10:40', end: '11:25' },
+      { start: '11:30', end: '12:15' },
+      { start: '12:20', end: '13:05' },
+      { start: '13:45', end: '14:30' },
+      { start: '14:35', end: '15:20' },
+    ];
+    const weekdays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'] as const;
+    const rooms = ['Room 101', 'Room 102', 'Room 201', 'Room 202', 'Lab 1', 'Lab 2', 'Room 301', 'Room 302'];
+
+    const timetableRows: {
+      class_id: string; subject_id: string; teacher_id: string;
+      day_of_week: string; start_time: string; end_time: string; room: string;
+    }[] = [];
+
+    for (let ci = 0; ci < 6; ci++) {
+      for (const day of weekdays) {
+        const daySubjects = [...SUBJECTS].sort(() => Math.random() - 0.5);
+        for (let p = 0; p < Math.min(periods.length, 6); p++) {
+          const sub = daySubjects[p % daySubjects.length];
+          const cs = classSubjects.find(c => c.class_id === CLASS_IDS[ci] && c.subject_id === sub.id);
+          timetableRows.push({
+            class_id: CLASS_IDS[ci],
+            subject_id: sub.id,
+            teacher_id: cs?.teacher_id || teacherIds[ci % teacherIds.length],
+            day_of_week: day,
+            start_time: periods[p].start,
+            end_time: periods[p].end,
+            room: rooms[(ci + p) % rooms.length],
+          });
+        }
+      }
+    }
+    await supabase.from('timetables').insert(timetableRows);
+
+    // ── Step 15: Examinations ────────────────────────────
+    const examTemplates = [
+      { name: 'Unit Test 1 - Mathematics', subjectIdx: 0, maxMarks: 50 },
+      { name: 'Unit Test 1 - English', subjectIdx: 1, maxMarks: 50 },
+      { name: 'Unit Test 1 - Science', subjectIdx: 2, maxMarks: 50 },
+      { name: 'Mid-Term Examination - Mathematics', subjectIdx: 0, maxMarks: 100 },
+      { name: 'Mid-Term Examination - English', subjectIdx: 1, maxMarks: 100 },
+      { name: 'Mid-Term Examination - Science', subjectIdx: 2, maxMarks: 100 },
+    ];
+
+    const examinations: {
+      id: string; name: string; class_id: string; subject_id: string;
+      date: string; start_time: string; end_time: string;
+      max_marks: number; room: string; created_by: string;
+    }[] = [];
+    let examCounter = 1;
+
+    for (let ci = 0; ci < 6; ci++) {
+      for (const tmpl of examTemplates.slice(0, 3)) {
+        const examDate = addDays(new Date('2025-05-05'), ci * 3 + examCounter);
+        examinations.push({
+          id: uuid('ex100000-0000-', examCounter),
+          name: tmpl.name,
+          class_id: CLASS_IDS[ci],
+          subject_id: SUBJECT_IDS[tmpl.subjectIdx],
+          date: dateStr(examDate),
+          start_time: '09:00',
+          end_time: '12:00',
+          max_marks: tmpl.maxMarks,
+          room: rooms[ci % rooms.length],
+          created_by: teacherIds[ci % teacherIds.length],
+        });
+        examCounter++;
+      }
+    }
+    await supabase.from('examinations').insert(examinations);
+
+    // ── Step 16: Exam Results (bell-curve scores) ────────
+    const examResults: {
+      exam_id: string; student_id: string; marks_obtained: number;
+      remarks: string | null; graded_by: string;
+    }[] = [];
+
+    for (const exam of examinations) {
+      const classIndex = CLASS_IDS.indexOf(exam.class_id);
+      if (classIndex < 0) continue;
+      // Only add results for past exams (first 12)
+      if (examCounter > 12 && exam === examinations[examinations.length - 1]) continue;
+      for (let s = classIndex * 10; s < classIndex * 10 + 10; s++) {
+        if (s >= studentIds.length || students[s].status !== 'active') continue;
+        if (Math.random() < 0.03) continue; // 3% absent
+        examResults.push({
+          exam_id: exam.id,
+          student_id: studentIds[s],
+          marks_obtained: bellCurve(exam.max_marks),
+          remarks: pickRandom(remarkOptions),
+          graded_by: exam.created_by,
+        });
+      }
+    }
+    for (let i = 0; i < examResults.length; i += 100) {
+      await supabase.from('exam_results').insert(examResults.slice(i, i + 100));
+    }
+
+    // ── Step 17: Admissions ──────────────────────────────
+    const admissionNames = [
+      { name: 'Arnav Mittal', gender: 'male', parent: 'Rahul Mittal' },
+      { name: 'Sneha Agnihotri', gender: 'female', parent: 'Deepak Agnihotri' },
+      { name: 'Vihaan Chadha', gender: 'male', parent: 'Priya Chadha' },
+      { name: 'Anika Khanna', gender: 'female', parent: 'Sameer Khanna' },
+      { name: 'Rehan Ansari', gender: 'male', parent: 'Fatima Ansari' },
+      { name: 'Dhriti Mathew', gender: 'female', parent: 'Thomas Mathew' },
+      { name: 'Yuvan Nambiar', gender: 'male', parent: 'Lakshmi Nambiar' },
+      { name: 'Trisha Bhardwaj', gender: 'female', parent: 'Ajay Bhardwaj' },
+      { name: 'Kabir Walia', gender: 'male', parent: 'Sunita Walia' },
+      { name: 'Manya Srivastava', gender: 'female', parent: 'Ravi Srivastava' },
+      { name: 'Aayan Hussain', gender: 'male', parent: 'Zainab Hussain' },
+      { name: 'Siya Raghavan', gender: 'female', parent: 'Krishnan Raghavan' },
+    ];
+    const admissionStatuses = ['applied', 'under_review', 'accepted', 'rejected', 'waitlisted'];
+
+    const admissions = admissionNames.map((a, i) => {
+      const classIdx = i % 6;
+      const dob = randomDate(new Date('2012-01-01'), new Date('2016-12-31'));
+      const appliedDate = addDays(new Date('2025-02-01'), Math.floor(Math.random() * 60));
+      return {
+        applicant_name: a.name,
+        email: `${a.name.split(' ')[0].toLowerCase()}@gmail.com`,
+        phone: `+91 98${String(Math.floor(Math.random() * 100000000)).padStart(8, '0')}`,
+        date_of_birth: dateStr(dob),
+        gender: a.gender,
+        class_applied: CLASS_IDS[classIdx],
+        parent_name: a.parent,
+        parent_phone: `+91 97${String(Math.floor(Math.random() * 100000000)).padStart(8, '0')}`,
+        previous_school: pickRandom(['DPS Indirapuram', 'Ryan International', 'Kendriya Vidyalaya', 'St. Xavier\'s', 'Modern School', null]),
+        status: i < 4 ? 'accepted' : i < 6 ? 'under_review' : i < 9 ? 'applied' : admissionStatuses[i % admissionStatuses.length],
+        applied_date: dateStr(appliedDate),
+        notes: i < 4 ? 'Documents verified. Admission confirmed.' : null,
+        reviewed_by: i < 6 ? adminId : null,
+      };
+    });
+    await supabase.from('admissions').insert(admissions);
+
+    // ── Step 18: Library Books ───────────────────────────
+    const libraryBooks = [
+      { id: uuid('lb100000-0000-', 1), title: 'NCERT Mathematics Class 9', author: 'NCERT', isbn: '978-8174506337', category: 'Textbook', total_copies: 15, available_copies: 12, shelf_location: 'A-1' },
+      { id: uuid('lb100000-0000-', 2), title: 'NCERT Science Class 10', author: 'NCERT', isbn: '978-8174506344', category: 'Textbook', total_copies: 15, available_copies: 10, shelf_location: 'A-2' },
+      { id: uuid('lb100000-0000-', 3), title: 'Wings of Fire', author: 'A.P.J. Abdul Kalam', isbn: '978-8173711466', category: 'Biography', total_copies: 5, available_copies: 3, shelf_location: 'B-1' },
+      { id: uuid('lb100000-0000-', 4), title: 'The Story of My Experiments with Truth', author: 'Mahatma Gandhi', isbn: '978-8172345440', category: 'Biography', total_copies: 4, available_copies: 2, shelf_location: 'B-1' },
+      { id: uuid('lb100000-0000-', 5), title: 'Malgudi Days', author: 'R.K. Narayan', isbn: '978-8185986173', category: 'Fiction', total_copies: 6, available_copies: 4, shelf_location: 'C-1' },
+      { id: uuid('lb100000-0000-', 6), title: 'The Guide', author: 'R.K. Narayan', isbn: '978-0143039648', category: 'Fiction', total_copies: 5, available_copies: 5, shelf_location: 'C-1' },
+      { id: uuid('lb100000-0000-', 7), title: 'A Brief History of Time', author: 'Stephen Hawking', isbn: '978-0553380163', category: 'Science', total_copies: 3, available_copies: 1, shelf_location: 'D-1' },
+      { id: uuid('lb100000-0000-', 8), title: 'Sapiens', author: 'Yuval Noah Harari', isbn: '978-0099590088', category: 'Non-Fiction', total_copies: 4, available_copies: 3, shelf_location: 'D-2' },
+      { id: uuid('lb100000-0000-', 9), title: 'The Diary of a Young Girl', author: 'Anne Frank', isbn: '978-0141315195', category: 'Biography', total_copies: 5, available_copies: 4, shelf_location: 'B-2' },
+      { id: uuid('lb100000-0000-', 10), title: 'Oxford English Dictionary', author: 'Oxford University Press', isbn: '978-0199571123', category: 'Reference', total_copies: 10, available_copies: 10, shelf_location: 'E-1' },
+      { id: uuid('lb100000-0000-', 11), title: 'Concise Inorganic Chemistry', author: 'J.D. Lee', isbn: '978-8126515547', category: 'Textbook', total_copies: 8, available_copies: 6, shelf_location: 'A-3' },
+      { id: uuid('lb100000-0000-', 12), title: 'Harry Potter and the Philosopher\'s Stone', author: 'J.K. Rowling', isbn: '978-1408855652', category: 'Fiction', total_copies: 6, available_copies: 2, shelf_location: 'C-2' },
+    ];
+    await supabase.from('library_books').insert(libraryBooks);
+
+    // ── Step 19: Book Issues ─────────────────────────────
+    const bookIssues: {
+      book_id: string; student_id: string; issued_by: string;
+      issue_date: string; due_date: string; return_date: string | null;
+      status: string; fine_amount: number;
+    }[] = [];
+    const bookIds = libraryBooks.map(b => b.id);
+
+    for (let i = 0; i < 20; i++) {
+      const bookId = bookIds[i % bookIds.length];
+      const sid = activeStudentIds[i % activeStudentIds.length];
+      const issueDate = addDays(new Date('2025-04-07'), Math.floor(Math.random() * 30));
+      const dueDate = addDays(issueDate, 14);
+      const returned = Math.random() < 0.6;
+      const returnDate = returned ? addDays(issueDate, Math.floor(Math.random() * 18) + 3) : null;
+      const isOverdue = !returned && dueDate < new Date('2025-05-15');
+      bookIssues.push({
+        book_id: bookId,
+        student_id: sid,
+        issued_by: teacherIds[i % teacherIds.length],
+        issue_date: dateStr(issueDate),
+        due_date: dateStr(dueDate),
+        return_date: returnDate ? dateStr(returnDate) : null,
+        status: returned ? 'returned' : isOverdue ? 'overdue' : 'issued',
+        fine_amount: isOverdue ? Math.floor(Math.random() * 5 + 1) * 10 : 0,
+      });
+    }
+    await supabase.from('book_issues').insert(bookIssues);
+
+    // ── Step 20: Events ──────────────────────────────────
+    const eventsList = [
+      { title: 'Annual Sports Day', description: 'Inter-house athletics and sports competition. Track & field events for all classes.', event_date: '2025-05-15', start_time: '08:00', end_time: '16:00', location: 'School Grounds', target_role: 'all' },
+      { title: 'Science Exhibition', description: 'Students showcase science projects and working models. Open to parents.', event_date: '2025-06-10', start_time: '09:00', end_time: '14:00', location: 'School Auditorium', target_role: 'all' },
+      { title: 'Parent-Teacher Meeting', description: 'Discuss student progress and address parent concerns.', event_date: '2025-04-26', start_time: '09:00', end_time: '13:00', location: 'Respective Classrooms', target_role: 'parent' },
+      { title: 'Independence Day Celebration', description: 'Flag hoisting, cultural programme, and patriotic songs.', event_date: '2025-08-15', start_time: '07:30', end_time: '11:00', location: 'Main Assembly Ground', target_role: 'all' },
+      { title: 'Inter-School Debate Competition', description: 'Annual debate competition with neighbouring schools. Topic: "AI in Education"', event_date: '2025-07-22', start_time: '10:00', end_time: '15:00', location: 'Conference Hall', target_role: 'all' },
+      { title: 'Annual Day Rehearsal', description: 'Full dress rehearsal for the Annual Day cultural programme.', event_date: '2025-11-20', start_time: '09:00', end_time: '15:00', location: 'School Auditorium', target_role: 'teacher' },
+      { title: 'Career Counselling Workshop', description: 'Career guidance session for Class 9-10 students by industry experts.', event_date: '2025-09-15', start_time: '10:00', end_time: '13:00', location: 'Seminar Hall', target_role: 'all' },
+      { title: 'Book Fair 2025', description: 'Annual book fair with publishers. Special discounts for students.', event_date: '2025-10-05', start_time: '08:00', end_time: '15:00', location: 'Library Block', target_role: 'all' },
+    ];
+    await supabase.from('events').insert(
+      eventsList.map(e => ({ ...e, organizer_id: adminId }))
+    );
+
+    // ── Step 21: Transport Routes ────────────────────────
+    const routes = [
+      { id: uuid('tr100000-0000-', 1), name: 'Route 1 - Sector 12-22', driver_name: 'Ramesh Yadav', driver_phone: '+91 9876543210', vehicle_number: 'DL-01-AB-1234', capacity: 40, start_point: 'Sector 12', end_point: 'Springdale Academy', stops: ['Sector 12', 'Sector 15', 'Sector 18', 'Sector 20', 'Sector 22', 'School'] },
+      { id: uuid('tr100000-0000-', 2), name: 'Route 2 - Defence Colony', driver_name: 'Suresh Prasad', driver_phone: '+91 9876543211', vehicle_number: 'DL-01-CD-5678', capacity: 35, start_point: 'Defence Colony', end_point: 'Springdale Academy', stops: ['Defence Colony', 'Lajpat Nagar', 'Kailash Colony', 'GK-1', 'School'] },
+      { id: uuid('tr100000-0000-', 3), name: 'Route 3 - Vasant Kunj', driver_name: 'Mohan Lal', driver_phone: '+91 9876543212', vehicle_number: 'DL-01-EF-9012', capacity: 45, start_point: 'Vasant Kunj', end_point: 'Springdale Academy', stops: ['Vasant Kunj', 'Vasant Vihar', 'RK Puram', 'Sarojini Nagar', 'School'] },
+      { id: uuid('tr100000-0000-', 4), name: 'Route 4 - Dwarka Express', driver_name: 'Ajay Kumar', driver_phone: '+91 9876543213', vehicle_number: 'DL-01-GH-3456', capacity: 50, start_point: 'Dwarka Sec 21', end_point: 'Springdale Academy', stops: ['Dwarka Sec 21', 'Dwarka Sec 12', 'Palam', 'Janakpuri', 'School'] },
+    ];
+    await supabase.from('transport_routes').insert(routes);
+
+    // ── Step 22: Transport Assignments ───────────────────
+    const transportAssignments: {
+      route_id: string; student_id: string; pickup_stop: string; dropoff_stop: string;
+    }[] = [];
+    // Assign ~30 students to buses
+    for (let i = 0; i < 30; i++) {
+      const route = routes[i % routes.length];
+      const stops = route.stops;
+      transportAssignments.push({
+        route_id: route.id,
+        student_id: activeStudentIds[i % activeStudentIds.length],
+        pickup_stop: stops[Math.floor(Math.random() * (stops.length - 1))],
+        dropoff_stop: 'School',
+      });
+    }
+    await supabase.from('transport_assignments').insert(transportAssignments);
+
+    // ── Step 23: Inventory Items ─────────────────────────
+    const inventoryItems = [
+      { name: 'Student Desks', category: 'Furniture', quantity: 300, unit: 'pieces', location: 'Classrooms', condition: 'good', purchase_date: '2024-06-15', unit_cost: 4500, supplier: 'Godrej Interio' },
+      { name: 'Whiteboard Markers (Box)', category: 'Stationery', quantity: 50, unit: 'boxes', location: 'Store Room B', condition: 'good', purchase_date: '2025-03-20', unit_cost: 350, supplier: 'Kores India' },
+      { name: 'Desktop Computers', category: 'Electronics', quantity: 40, unit: 'pieces', location: 'Computer Lab', condition: 'good', purchase_date: '2024-01-10', unit_cost: 35000, supplier: 'Dell India' },
+      { name: 'Projectors', category: 'Electronics', quantity: 12, unit: 'pieces', location: 'Various Classrooms', condition: 'good', purchase_date: '2024-03-05', unit_cost: 28000, supplier: 'Epson India' },
+      { name: 'Chemistry Lab Equipment Set', category: 'Lab Equipment', quantity: 20, unit: 'sets', location: 'Chemistry Lab', condition: 'good', purchase_date: '2024-07-20', unit_cost: 8500, supplier: 'Scientific Traders' },
+      { name: 'Sports Equipment Kit', category: 'Sports', quantity: 8, unit: 'kits', location: 'Sports Room', condition: 'fair', purchase_date: '2023-11-10', unit_cost: 12000, supplier: 'Cosco Sports' },
+      { name: 'Library Chairs', category: 'Furniture', quantity: 60, unit: 'pieces', location: 'Library', condition: 'good', purchase_date: '2024-04-01', unit_cost: 2800, supplier: 'Nilkamal' },
+      { name: 'First Aid Kits', category: 'Medical', quantity: 15, unit: 'kits', location: 'Medical Room + Floors', condition: 'good', purchase_date: '2025-01-05', unit_cost: 1500, supplier: 'Himalaya Wellness' },
+      { name: 'Fire Extinguishers', category: 'Safety', quantity: 24, unit: 'pieces', location: 'All Floors', condition: 'good', purchase_date: '2024-08-15', unit_cost: 3200, supplier: 'Safex Fire' },
+      { name: 'Printer Cartridges', category: 'Stationery', quantity: 12, unit: 'pieces', location: 'Admin Office', condition: 'good', purchase_date: '2025-03-01', unit_cost: 2200, supplier: 'HP India' },
+      { name: 'Microscopes', category: 'Lab Equipment', quantity: 15, unit: 'pieces', location: 'Biology Lab', condition: 'fair', purchase_date: '2022-06-20', unit_cost: 15000, supplier: 'Magnus Opto' },
+      { name: 'Audio System (PA)', category: 'Electronics', quantity: 2, unit: 'sets', location: 'Auditorium + Assembly', condition: 'good', purchase_date: '2024-02-10', unit_cost: 45000, supplier: 'Bose India' },
+    ];
+    await supabase.from('inventory_items').insert(inventoryItems);
+
+    // ── Step 24: Payroll (April 2025) ────────────────────
+    const payrollRecords: {
+      teacher_id: string; month: number; year: number;
+      basic_salary: number; allowances: number; deductions: number;
+      net_salary: number; status: string; paid_date: string | null;
+    }[] = [];
+
+    const salarySlabs = [55000, 48000, 52000, 45000];
+    for (let ti = 0; ti < teacherIds.length; ti++) {
+      const basic = salarySlabs[ti % salarySlabs.length];
+      const hra = Math.round(basic * 0.25);
+      const da = Math.round(basic * 0.12);
+      const allowances = hra + da;
+      const pf = Math.round(basic * 0.12);
+      const tax = Math.round(basic * 0.05);
+      const deductions = pf + tax;
+      const net = basic + allowances - deductions;
+
+      // April - paid
+      payrollRecords.push({
+        teacher_id: teacherIds[ti],
+        month: 4,
+        year: 2025,
+        basic_salary: basic,
+        allowances,
+        deductions,
+        net_salary: net,
+        status: 'paid',
+        paid_date: '2025-04-28',
+      });
+      // May - pending
+      payrollRecords.push({
+        teacher_id: teacherIds[ti],
+        month: 5,
+        year: 2025,
+        basic_salary: basic,
+        allowances,
+        deductions,
+        net_salary: net,
+        status: 'pending',
+        paid_date: null,
+      });
+    }
+    await supabase.from('payroll').insert(payrollRecords);
+
+    // ── Step 25: Messages ────────────────────────────────
+    const messagesList = [
+      { sender_id: adminId, recipient_id: teacherIds[0], subject: 'Curriculum Meeting Tomorrow', content: 'Dear Mrs. Krishnamurthy,\n\nJust a reminder about the curriculum review meeting scheduled for tomorrow at 3:30 PM in the conference room. Please bring your annual plan draft.\n\nRegards,\nDr. Vikram Chandra', is_read: true },
+      { sender_id: teacherIds[0], recipient_id: adminId, subject: 'Re: Curriculum Meeting Tomorrow', content: 'Dear Dr. Chandra,\n\nThank you for the reminder. I have prepared the annual plan for Mathematics and English. Will be there on time.\n\nBest regards,\nMrs. Krishnamurthy', is_read: true },
+      { sender_id: adminId, recipient_id: teacherIds[1] || teacherIds[0], subject: 'Sports Day Coordination', content: 'Dear Mr. Mathur,\n\nPlease coordinate with the PT department for the Annual Sports Day preparations. We need the event schedule by next week.\n\nThanks,\nDr. Vikram Chandra', is_read: false },
+      { sender_id: teacherIds[2] || teacherIds[0], recipient_id: adminId, subject: 'Lab Equipment Request', content: 'Dear Sir,\n\nWe need additional test tubes and beakers for the Science lab. The current stock is running low with the increased number of practical sessions this term.\n\nKindly arrange procurement at the earliest.\n\nMs. Priyanka Nair', is_read: true },
+      { sender_id: adminId, recipient_id: teacherIds[2] || teacherIds[0], subject: 'Re: Lab Equipment Request', content: 'Dear Ms. Nair,\n\nI have approved the procurement request. Please submit the detailed list with quantities to the admin office by Friday.\n\nRegards,\nDr. Vikram Chandra', is_read: false },
+    ];
+    if (parentIds[0]) {
+      messagesList.push(
+        { sender_id: parentIds[0], recipient_id: teacherIds[0], subject: 'Query about PTM Slot', content: 'Dear Ma\'am,\n\nCould you please confirm my PTM slot for Aarav on April 26? I would prefer the 10:00-10:15 AM slot if available.\n\nThank you,\nRajesh Sharma', is_read: true },
+        { sender_id: teacherIds[0], recipient_id: parentIds[0], subject: 'Re: Query about PTM Slot', content: 'Dear Mr. Sharma,\n\nThe 10:00-10:15 AM slot is confirmed for you. Please bring Aarav\'s diary along.\n\nRegards,\nMrs. Krishnamurthy', is_read: false },
+      );
+    }
+    await supabase.from('messages').insert(messagesList);
+
     // ── Summary ────────────────────────────────────────────
     const totalPaid = feePayments.filter(f => f.status === 'paid').reduce((s, f) => s + f.amount_paid, 0);
     const attPresent = attendance.filter(a => a.status === 'present' || a.status === 'late').length;
@@ -675,6 +982,18 @@ Each student may register for a maximum of 3 events. Forms available with your P
         announcements: announcements.length,
         teachers: teacherIds.length,
         parents: parentIds.length,
+        timetable_periods: timetableRows.length,
+        examinations: examinations.length,
+        exam_results: examResults.length,
+        admissions: admissions.length,
+        library_books: libraryBooks.length,
+        book_issues: bookIssues.length,
+        events: eventsList.length,
+        transport_routes: routes.length,
+        transport_assignments: transportAssignments.length,
+        inventory_items: inventoryItems.length,
+        payroll_records: payrollRecords.length,
+        messages: messagesList.length,
       },
     });
   } catch (error) {

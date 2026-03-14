@@ -15,6 +15,16 @@ import {
   Settings,
   GraduationCap,
   ChevronLeft,
+  Calendar,
+  UserCog,
+  FileText,
+  UserPlus,
+  Library,
+  CalendarDays,
+  Bus,
+  Package,
+  Wallet,
+  MessageSquare,
 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
@@ -27,10 +37,20 @@ interface SidebarProps {
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: ['admin', 'teacher', 'parent'] },
   { href: '/students', label: 'Students', icon: Users, roles: ['admin', 'teacher', 'parent'] },
+  { href: '/teachers', label: 'Teachers', icon: UserCog, roles: ['admin'] },
   { href: '/attendance', label: 'Attendance', icon: ClipboardCheck, roles: ['admin', 'teacher', 'parent'] },
+  { href: '/timetable', label: 'Timetable', icon: Calendar, roles: ['admin', 'teacher', 'parent'] },
   { href: '/grades', label: 'Grades', icon: BookOpen, roles: ['admin', 'teacher', 'parent'] },
+  { href: '/examinations', label: 'Exams', icon: FileText, roles: ['admin', 'teacher'] },
   { href: '/fees', label: 'Fees', icon: CreditCard, roles: ['admin', 'parent'] },
+  { href: '/admissions', label: 'Admissions', icon: UserPlus, roles: ['admin'] },
+  { href: '/library', label: 'Library', icon: Library, roles: ['admin', 'teacher', 'parent'] },
+  { href: '/messages', label: 'Messages', icon: MessageSquare, roles: ['admin', 'teacher', 'parent'] },
   { href: '/announcements', label: 'Announcements', icon: Megaphone, roles: ['admin', 'teacher', 'parent'] },
+  { href: '/events', label: 'Events', icon: CalendarDays, roles: ['admin', 'teacher', 'parent'] },
+  { href: '/transport', label: 'Transport', icon: Bus, roles: ['admin', 'parent'] },
+  { href: '/inventory', label: 'Inventory', icon: Package, roles: ['admin'] },
+  { href: '/payroll', label: 'Payroll', icon: Wallet, roles: ['admin'] },
   { href: '/reports', label: 'Reports', icon: BarChart3, roles: ['admin', 'teacher'] },
   { href: '/settings', label: 'Settings', icon: Settings, roles: ['admin', 'teacher', 'parent'] },
 ];

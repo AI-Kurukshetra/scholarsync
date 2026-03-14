@@ -20,6 +20,17 @@
 --   • ~160 grades (bell-curve distribution with teacher remarks)
 --   • ~120 fee payments (4 fee types, mix of paid/partial/pending/overdue)
 --   • 8 announcements (realistic school communications, staggered dates)
+--   • ~180 timetable periods (6 periods/day × 5 days × 6 classes)
+--   • 18 examinations (3/class: unit tests + mid-terms)
+--   • ~160 exam results (bell-curve marks)
+--   • 12 admission applications (mixed statuses)
+--   • 12 library books (textbooks, fiction, reference)
+--   • 20 book issues (issued, returned, overdue)
+--   • 8 events (sports day, science fair, PTM, etc.)
+--   • 4 transport routes with 30 student assignments
+--   • 12 inventory items (furniture, electronics, lab equipment)
+--   • 8 payroll records (4 teachers × 2 months)
+--   • 7 messages (admin-teacher, teacher-parent communication)
 --
 -- Demo accounts:
 --   admin@scholarsync.demo     / demo123456

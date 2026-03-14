@@ -17,10 +17,20 @@ describe('Sidebar', () => {
     render(<Sidebar {...defaultProps} />);
     expect(screen.getByText('Dashboard')).toBeInTheDocument();
     expect(screen.getByText('Students')).toBeInTheDocument();
+    expect(screen.getByText('Teachers')).toBeInTheDocument();
     expect(screen.getByText('Attendance')).toBeInTheDocument();
+    expect(screen.getByText('Timetable')).toBeInTheDocument();
     expect(screen.getByText('Grades')).toBeInTheDocument();
+    expect(screen.getByText('Exams')).toBeInTheDocument();
     expect(screen.getByText('Fees')).toBeInTheDocument();
+    expect(screen.getByText('Admissions')).toBeInTheDocument();
+    expect(screen.getByText('Library')).toBeInTheDocument();
+    expect(screen.getByText('Messages')).toBeInTheDocument();
     expect(screen.getByText('Announcements')).toBeInTheDocument();
+    expect(screen.getByText('Events')).toBeInTheDocument();
+    expect(screen.getByText('Transport')).toBeInTheDocument();
+    expect(screen.getByText('Inventory')).toBeInTheDocument();
+    expect(screen.getByText('Payroll')).toBeInTheDocument();
     expect(screen.getByText('Reports')).toBeInTheDocument();
     expect(screen.getByText('Settings')).toBeInTheDocument();
   });
@@ -29,14 +39,20 @@ describe('Sidebar', () => {
     render(<Sidebar {...defaultProps} role="teacher" />);
     expect(screen.getByText('Dashboard')).toBeInTheDocument();
     expect(screen.getByText('Reports')).toBeInTheDocument();
+    expect(screen.getByText('Exams')).toBeInTheDocument();
     expect(screen.queryByText('Fees')).not.toBeInTheDocument();
+    expect(screen.queryByText('Admissions')).not.toBeInTheDocument();
+    expect(screen.queryByText('Payroll')).not.toBeInTheDocument();
   });
 
   it('filters nav items by parent role', () => {
     render(<Sidebar {...defaultProps} role="parent" />);
     expect(screen.getByText('Dashboard')).toBeInTheDocument();
     expect(screen.getByText('Fees')).toBeInTheDocument();
+    expect(screen.getByText('Library')).toBeInTheDocument();
     expect(screen.queryByText('Reports')).not.toBeInTheDocument();
+    expect(screen.queryByText('Teachers')).not.toBeInTheDocument();
+    expect(screen.queryByText('Admissions')).not.toBeInTheDocument();
   });
 
   it('hides labels when collapsed', () => {

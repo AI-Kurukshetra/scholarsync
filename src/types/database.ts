@@ -137,3 +137,171 @@ export interface Announcement {
   author?: Profile;
   target_class?: Class;
 }
+
+export interface Timetable {
+  id: string;
+  class_id: string;
+  subject_id: string;
+  teacher_id: string;
+  day_of_week: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday';
+  start_time: string;
+  end_time: string;
+  room: string | null;
+  class?: Class;
+  subject?: Subject;
+  teacher?: Profile;
+}
+
+export interface Examination {
+  id: string;
+  name: string;
+  class_id: string;
+  subject_id: string;
+  date: string;
+  start_time: string;
+  end_time: string;
+  max_marks: number;
+  room: string | null;
+  created_by: string;
+  created_at: string;
+  class?: Class;
+  subject?: Subject;
+}
+
+export interface ExamResult {
+  id: string;
+  exam_id: string;
+  student_id: string;
+  marks_obtained: number;
+  remarks: string | null;
+  graded_by: string;
+  created_at: string;
+  exam?: Examination;
+  student?: Student;
+}
+
+export interface Admission {
+  id: string;
+  applicant_name: string;
+  email: string;
+  phone: string;
+  date_of_birth: string;
+  gender: 'male' | 'female' | 'other';
+  class_applied: string;
+  parent_name: string;
+  parent_phone: string;
+  previous_school: string | null;
+  status: 'applied' | 'under_review' | 'accepted' | 'rejected' | 'waitlisted';
+  applied_date: string;
+  notes: string | null;
+  reviewed_by: string | null;
+  created_at: string;
+  class?: Class;
+}
+
+export interface LibraryBook {
+  id: string;
+  title: string;
+  author: string;
+  isbn: string | null;
+  category: string | null;
+  total_copies: number;
+  available_copies: number;
+  shelf_location: string | null;
+  status: 'available' | 'unavailable';
+  created_at: string;
+}
+
+export interface BookIssue {
+  id: string;
+  book_id: string;
+  student_id: string;
+  issued_by: string;
+  issue_date: string;
+  due_date: string;
+  return_date: string | null;
+  status: 'issued' | 'returned' | 'overdue';
+  fine_amount: number;
+  created_at: string;
+  book?: LibraryBook;
+  student?: Student;
+}
+
+export interface Event {
+  id: string;
+  title: string;
+  description: string | null;
+  event_date: string;
+  start_time: string | null;
+  end_time: string | null;
+  location: string | null;
+  organizer_id: string;
+  target_role: string;
+  created_at: string;
+  organizer?: Profile;
+}
+
+export interface TransportRoute {
+  id: string;
+  name: string;
+  driver_name: string | null;
+  driver_phone: string | null;
+  vehicle_number: string | null;
+  capacity: number;
+  start_point: string | null;
+  end_point: string | null;
+  stops: string[] | null;
+  created_at: string;
+}
+
+export interface TransportAssignment {
+  id: string;
+  route_id: string;
+  student_id: string;
+  pickup_stop: string | null;
+  dropoff_stop: string | null;
+  route?: TransportRoute;
+  student?: Student;
+}
+
+export interface InventoryItem {
+  id: string;
+  name: string;
+  category: string | null;
+  quantity: number;
+  unit: string;
+  location: string | null;
+  condition: 'good' | 'fair' | 'poor';
+  purchase_date: string | null;
+  unit_cost: number | null;
+  supplier: string | null;
+  notes: string | null;
+  created_at: string;
+}
+
+export interface Payroll {
+  id: string;
+  teacher_id: string;
+  month: number;
+  year: number;
+  basic_salary: number;
+  allowances: number;
+  deductions: number;
+  net_salary: number;
+  status: 'pending' | 'processed' | 'paid';
+  paid_date: string | null;
+  created_at: string;
+  teacher?: Profile;
+}
+
+export interface Message {
+  id: string;
+  sender_id: string;
+  recipient_id: string;
+  subject: string | null;
+  content: string;
+  is_read: boolean;
+  created_at: string;
+  sender?: Profile;
+  recipient?: Profile;
+}
