@@ -7,13 +7,7 @@ import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { GraduationCap, Loader2, Sparkles, ArrowRight } from 'lucide-react';
-
-const demoAccounts = [
-  { role: 'Admin', email: 'admin@scholarsync.demo', password: 'demo123456', color: 'from-violet-500 to-indigo-500' },
-  { role: 'Teacher', email: 'teacher@scholarsync.demo', password: 'demo123456', color: 'from-cyan-500 to-teal-500' },
-  { role: 'Parent', email: 'parent@scholarsync.demo', password: 'demo123456', color: 'from-amber-500 to-orange-500' },
-];
+import { GraduationCap, Loader2, ArrowRight } from 'lucide-react';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -29,27 +23,6 @@ export default function LoginPage() {
     setError('');
 
     const { error } = await supabase.auth.signInWithPassword({ email, password });
-
-    if (error) {
-      setError(error.message);
-      setLoading(false);
-      return;
-    }
-
-    router.push('/dashboard');
-    router.refresh();
-  };
-
-  const handleDemoLogin = async (demoEmail: string, demoPassword: string) => {
-    setEmail(demoEmail);
-    setPassword(demoPassword);
-    setLoading(true);
-    setError('');
-
-    const { error } = await supabase.auth.signInWithPassword({
-      email: demoEmail,
-      password: demoPassword,
-    });
 
     if (error) {
       setError(error.message);
@@ -105,27 +78,6 @@ export default function LoginPage() {
           Sign in
         </Button>
       </form>
-
-      <div className="mt-8">
-        <div className="flex items-center gap-2 mb-3">
-          <Sparkles className="h-3 w-3 text-primary" />
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Quick access</p>
-        </div>
-        <div className="space-y-2">
-          {demoAccounts.map((account) => (
-            <button
-              key={account.role}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl border border-border/60 bg-card/50 text-sm hover:bg-secondary/80 hover:ring-1 hover:ring-primary/20 transition-all duration-200 disabled:opacity-50 group"
-              onClick={() => handleDemoLogin(account.email, account.password)}
-              disabled={loading}
-            >
-              <div className={`w-2 h-2 rounded-full bg-gradient-to-br ${account.color} shadow-lg`} />
-              <span className="font-medium">{account.role}</span>
-              <span className="text-xs text-muted-foreground font-mono ml-auto">{account.email}</span>
-            </button>
-          ))}
-        </div>
-      </div>
 
       <p className="mt-8 text-sm text-muted-foreground text-center">
         Don&apos;t have an account?{' '}

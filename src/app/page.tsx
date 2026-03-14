@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import {
   GraduationCap, Users, ClipboardCheck, BookOpen, CreditCard, Calendar,
-  Shield, Globe, Brain, ArrowRight, CheckCircle2, Sparkles,
+  Globe, Brain, ArrowRight, CheckCircle2, Sparkles,
   MessageSquare, Bus, Library, FileText, Building2, Package,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -36,7 +36,7 @@ const highlights = [
   'CSV data export for all modules',
   'Dark mode by default with theme toggle',
   'Responsive design for mobile & desktop',
-  'Comprehensive seed data with 60+ students',
+  'Secure authentication with Supabase Auth',
 ];
 
 export default function LandingPage() {
@@ -89,7 +89,7 @@ export default function LandingPage() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
           <Button size="lg" className="px-8 shadow-lg shadow-primary/25" asChild>
             <Link href="/login">
-              Try Demo <ArrowRight className="ml-2 h-4 w-4" />
+              Get Started <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
           <Button size="lg" variant="outline" className="px-8" asChild>
@@ -105,39 +105,6 @@ export default function LandingPage() {
               <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium mt-1">{stat.label}</span>
             </div>
           ))}
-        </div>
-      </section>
-
-      {/* Demo Credentials */}
-      <section className="relative z-10 px-6 lg:px-12 py-12 max-w-4xl mx-auto">
-        <div className="rounded-2xl bg-card/40 frost border border-border/40 p-8">
-          <div className="text-center mb-6">
-            <h2 className="text-xl font-bold text-gradient mb-2">Try It Now — No Sign Up Required</h2>
-            <p className="text-sm text-muted-foreground">Use these demo accounts to explore the platform instantly</p>
-          </div>
-          <div className="grid sm:grid-cols-3 gap-4">
-            {[
-              { role: 'Admin', email: 'admin@scholarsync.demo', desc: 'Full access to all 23+ modules', color: 'from-violet-500 to-indigo-500', icon: Shield },
-              { role: 'Teacher', email: 'teacher@scholarsync.demo', desc: 'Grades, attendance, exams, reports', color: 'from-cyan-500 to-teal-500', icon: BookOpen },
-              { role: 'Parent', email: 'parent@scholarsync.demo', desc: 'Track child\'s progress & fees', color: 'from-amber-500 to-orange-500', icon: Users },
-            ].map((account) => (
-              <Link
-                key={account.role}
-                href="/login"
-                className="group flex flex-col items-center gap-3 p-5 rounded-xl border border-border/40 bg-card/30 hover:bg-secondary/60 hover:border-primary/30 transition-all duration-300"
-              >
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${account.color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                  <account.icon className="h-5 w-5 text-white" />
-                </div>
-                <div className="text-center">
-                  <p className="font-semibold text-sm">{account.role}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">{account.desc}</p>
-                  <p className="text-xs font-mono text-primary/70 mt-2">{account.email}</p>
-                  <p className="text-[10px] text-muted-foreground">Password: demo123456</p>
-                </div>
-              </Link>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -217,7 +184,7 @@ export default function LandingPage() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button size="lg" className="px-8 shadow-lg shadow-primary/25" asChild>
               <Link href="/login">
-                Launch Demo <ArrowRight className="ml-2 h-4 w-4" />
+                Get Started <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
             <Button size="lg" variant="outline" className="px-8" asChild>
