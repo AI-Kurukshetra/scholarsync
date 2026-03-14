@@ -1,0 +1,27 @@
+-- ScholarSync Seed Data
+-- =====================
+-- This file is for REFERENCE only.
+-- The actual seeding is performed by the POST /api/seed endpoint,
+-- which creates auth users, then populates all tables dynamically
+-- with realistic production-quality data.
+--
+-- To seed: POST to /api/seed (requires SUPABASE_SERVICE_ROLE_KEY in env)
+--
+-- What gets created:
+--   • 1 academic year (2025-26, Indian school calendar April-March)
+--   • 6 subjects (Math, English, Science, SST, Hindi, CS)
+--   • 6 classes (Class 5-A through Class 10-A)
+--   • 36 class-subject mappings
+--   • 60 students (10/class, realistic Indian names, staggered enrollment)
+--   • 1 admin, 4 teachers, 30 parents (auth users with profiles)
+--   • 60 parent-student relationships
+--   • ~885 attendance records (15 school days, Mon-Sat, ~92% rate)
+--   • 18 assignments (3/class, varied subjects and types)
+--   • ~160 grades (bell-curve distribution with teacher remarks)
+--   • ~120 fee payments (4 fee types, mix of paid/partial/pending/overdue)
+--   • 8 announcements (realistic school communications, staggered dates)
+--
+-- Demo accounts:
+--   admin@scholarsync.demo     / demo123456
+--   teacher@scholarsync.demo   / demo123456
+--   parent@scholarsync.demo    / demo123456
