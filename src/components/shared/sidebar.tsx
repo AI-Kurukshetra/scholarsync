@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import type { AppRole } from '@/types/database';
+import { useLanguage } from '@/lib/i18n/language-context';
+import type { TranslationKey } from '@/lib/i18n/translations';
 import {
   LayoutDashboard,
   Users,
@@ -22,9 +24,11 @@ import {
   Library,
   CalendarDays,
   Bus,
+  Building2,
   Package,
   Wallet,
   MessageSquare,
+  Brain,
 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
@@ -35,28 +39,31 @@ interface SidebarProps {
 }
 
 const navItems = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: ['admin', 'teacher', 'parent'] },
-  { href: '/students', label: 'Students', icon: Users, roles: ['admin', 'teacher', 'parent'] },
-  { href: '/teachers', label: 'Teachers', icon: UserCog, roles: ['admin'] },
-  { href: '/attendance', label: 'Attendance', icon: ClipboardCheck, roles: ['admin', 'teacher', 'parent'] },
-  { href: '/timetable', label: 'Timetable', icon: Calendar, roles: ['admin', 'teacher', 'parent'] },
-  { href: '/grades', label: 'Grades', icon: BookOpen, roles: ['admin', 'teacher', 'parent'] },
-  { href: '/examinations', label: 'Exams', icon: FileText, roles: ['admin', 'teacher'] },
-  { href: '/fees', label: 'Fees', icon: CreditCard, roles: ['admin', 'parent'] },
-  { href: '/admissions', label: 'Admissions', icon: UserPlus, roles: ['admin'] },
-  { href: '/library', label: 'Library', icon: Library, roles: ['admin', 'teacher', 'parent'] },
-  { href: '/messages', label: 'Messages', icon: MessageSquare, roles: ['admin', 'teacher', 'parent'] },
-  { href: '/announcements', label: 'Announcements', icon: Megaphone, roles: ['admin', 'teacher', 'parent'] },
-  { href: '/events', label: 'Events', icon: CalendarDays, roles: ['admin', 'teacher', 'parent'] },
-  { href: '/transport', label: 'Transport', icon: Bus, roles: ['admin', 'parent'] },
-  { href: '/inventory', label: 'Inventory', icon: Package, roles: ['admin'] },
-  { href: '/payroll', label: 'Payroll', icon: Wallet, roles: ['admin'] },
-  { href: '/reports', label: 'Reports', icon: BarChart3, roles: ['admin', 'teacher'] },
-  { href: '/settings', label: 'Settings', icon: Settings, roles: ['admin', 'teacher', 'parent'] },
+  { href: '/dashboard', labelKey: 'dashboard' as TranslationKey, icon: LayoutDashboard, roles: ['admin', 'teacher', 'parent'] },
+  { href: '/students', labelKey: 'students' as TranslationKey, icon: Users, roles: ['admin', 'teacher', 'parent'] },
+  { href: '/teachers', labelKey: 'teachers' as TranslationKey, icon: UserCog, roles: ['admin'] },
+  { href: '/attendance', labelKey: 'attendance' as TranslationKey, icon: ClipboardCheck, roles: ['admin', 'teacher', 'parent'] },
+  { href: '/timetable', labelKey: 'timetable' as TranslationKey, icon: Calendar, roles: ['admin', 'teacher', 'parent'] },
+  { href: '/grades', labelKey: 'grades' as TranslationKey, icon: BookOpen, roles: ['admin', 'teacher', 'parent'] },
+  { href: '/examinations', labelKey: 'exams' as TranslationKey, icon: FileText, roles: ['admin', 'teacher'] },
+  { href: '/fees', labelKey: 'fees' as TranslationKey, icon: CreditCard, roles: ['admin', 'parent'] },
+  { href: '/admissions', labelKey: 'admissions' as TranslationKey, icon: UserPlus, roles: ['admin'] },
+  { href: '/library', labelKey: 'library' as TranslationKey, icon: Library, roles: ['admin', 'teacher', 'parent'] },
+  { href: '/messages', labelKey: 'messages' as TranslationKey, icon: MessageSquare, roles: ['admin', 'teacher', 'parent'] },
+  { href: '/announcements', labelKey: 'announcements' as TranslationKey, icon: Megaphone, roles: ['admin', 'teacher', 'parent'] },
+  { href: '/events', labelKey: 'events' as TranslationKey, icon: CalendarDays, roles: ['admin', 'teacher', 'parent'] },
+  { href: '/transport', labelKey: 'transport' as TranslationKey, icon: Bus, roles: ['admin', 'parent'] },
+  { href: '/hostel', labelKey: 'hostel' as TranslationKey, icon: Building2, roles: ['admin'] },
+  { href: '/inventory', labelKey: 'inventory' as TranslationKey, icon: Package, roles: ['admin'] },
+  { href: '/payroll', labelKey: 'payroll' as TranslationKey, icon: Wallet, roles: ['admin'] },
+  { href: '/analytics', labelKey: 'analytics' as TranslationKey, icon: Brain, roles: ['admin', 'teacher'] },
+  { href: '/reports', labelKey: 'reports' as TranslationKey, icon: BarChart3, roles: ['admin', 'teacher'] },
+  { href: '/settings', labelKey: 'settings' as TranslationKey, icon: Settings, roles: ['admin', 'teacher', 'parent'] },
 ];
 
 export function Sidebar({ role, collapsed, onToggle }: SidebarProps) {
   const pathname = usePathname();
+  const { t } = useLanguage();
 
   const filteredItems = navItems.filter((item) =>
     item.roles.includes(role)
@@ -106,7 +113,7 @@ export function Sidebar({ role, collapsed, onToggle }: SidebarProps) {
                 )}
               >
                 <item.icon className={cn('h-[18px] w-[18px] shrink-0', isActive && 'drop-shadow-[0_0_6px_hsl(var(--primary)/0.5)]')} />
-                {!collapsed && <span>{item.label}</span>}
+                {!collapsed && <span>{t(item.labelKey)}</span>}
                 {isActive && !collapsed && (
                   <div className="absolute right-2 w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_6px_hsl(var(--primary)/0.6)]" />
                 )}
@@ -118,7 +125,7 @@ export function Sidebar({ role, collapsed, onToggle }: SidebarProps) {
                 <Tooltip key={item.href}>
                   <TooltipTrigger asChild>{linkContent}</TooltipTrigger>
                   <TooltipContent side="right" className="font-medium">
-                    {item.label}
+                    {t(item.labelKey)}
                   </TooltipContent>
                 </Tooltip>
               );

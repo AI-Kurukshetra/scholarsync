@@ -294,6 +294,33 @@ export interface Payroll {
   teacher?: Profile;
 }
 
+export interface HostelRoom {
+  id: string;
+  room_number: string;
+  block: string;
+  floor: number;
+  capacity: number;
+  occupied: number;
+  room_type: 'single' | 'shared' | 'dormitory';
+  amenities: string[] | null;
+  status: 'available' | 'full' | 'maintenance';
+  created_at: string;
+}
+
+export interface HostelAllocation {
+  id: string;
+  room_id: string;
+  student_id: string;
+  allocated_date: string;
+  vacated_date: string | null;
+  mess_opted: boolean;
+  emergency_contact: string | null;
+  status: 'active' | 'vacated';
+  created_at: string;
+  room?: HostelRoom;
+  student?: Student;
+}
+
 export interface Message {
   id: string;
   sender_id: string;

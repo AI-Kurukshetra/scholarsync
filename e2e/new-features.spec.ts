@@ -195,5 +195,47 @@ test.describe('New Navigation Items', () => {
     await expect(page.getByRole('link', { name: 'Admissions' })).not.toBeVisible();
     await expect(page.getByRole('link', { name: 'Inventory' })).not.toBeVisible();
     await expect(page.getByRole('link', { name: 'Payroll' })).not.toBeVisible();
+    await expect(page.getByRole('link', { name: 'Hostel' })).not.toBeVisible();
+  });
+});
+
+test.describe('Hostel Management', () => {
+  test('should display hostel page', async ({ page }) => {
+    await loginAsAdmin(page);
+    await page.goto('/hostel');
+    await expect(page.getByRole('heading', { name: /Hostel/i })).toBeVisible();
+  });
+
+  test('should navigate to add room form', async ({ page }) => {
+    await loginAsAdmin(page);
+    await page.goto('/hostel/new');
+    await expect(page.getByRole('heading', { name: /Room|Hostel/i })).toBeVisible();
+  });
+
+  test('should navigate to allocations page', async ({ page }) => {
+    await loginAsAdmin(page);
+    await page.goto('/hostel/allocations');
+    await expect(page.getByRole('heading', { name: /Allocation|Hostel/i })).toBeVisible();
+  });
+});
+
+test.describe('AI Analytics', () => {
+  test('should display analytics page', async ({ page }) => {
+    await loginAsAdmin(page);
+    await page.goto('/analytics');
+    await expect(page.getByRole('heading', { name: /Analytics/i })).toBeVisible();
+  });
+
+  test('should show risk assessment stats', async ({ page }) => {
+    await loginAsAdmin(page);
+    await page.goto('/analytics');
+    await expect(page.getByText(/At-Risk Students/i)).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText(/On Track/i)).toBeVisible();
+  });
+
+  test('should show student risk table', async ({ page }) => {
+    await loginAsAdmin(page);
+    await page.goto('/analytics');
+    await expect(page.getByText(/Student Risk Assessment/i)).toBeVisible({ timeout: 10000 });
   });
 });

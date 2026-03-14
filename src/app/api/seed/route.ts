@@ -962,6 +962,41 @@ Each student may register for a maximum of 3 events. Forms available with your P
     }
     await supabase.from('messages').insert(messagesList);
 
+    // ── Step 26: Hostel Rooms ────────────────────────────
+    const hostelRooms = [
+      { id: uuid('hr100000-0000-', 1), room_number: '101', block: 'A', floor: 1, capacity: 4, occupied: 3, room_type: 'shared', amenities: ['Fan', 'Cupboard', 'Study Table'], status: 'available' },
+      { id: uuid('hr100000-0000-', 2), room_number: '102', block: 'A', floor: 1, capacity: 4, occupied: 4, room_type: 'shared', amenities: ['Fan', 'Cupboard', 'Study Table'], status: 'full' },
+      { id: uuid('hr100000-0000-', 3), room_number: '103', block: 'A', floor: 1, capacity: 2, occupied: 1, room_type: 'shared', amenities: ['AC', 'Cupboard', 'Study Table', 'Attached Bathroom'], status: 'available' },
+      { id: uuid('hr100000-0000-', 4), room_number: '201', block: 'A', floor: 2, capacity: 4, occupied: 2, room_type: 'shared', amenities: ['Fan', 'Cupboard', 'Study Table'], status: 'available' },
+      { id: uuid('hr100000-0000-', 5), room_number: '202', block: 'A', floor: 2, capacity: 1, occupied: 1, room_type: 'single', amenities: ['AC', 'Cupboard', 'Study Table', 'Attached Bathroom'], status: 'full' },
+      { id: uuid('hr100000-0000-', 6), room_number: '101', block: 'B', floor: 1, capacity: 6, occupied: 5, room_type: 'dormitory', amenities: ['Fan', 'Cupboard'], status: 'available' },
+      { id: uuid('hr100000-0000-', 7), room_number: '102', block: 'B', floor: 1, capacity: 6, occupied: 6, room_type: 'dormitory', amenities: ['Fan', 'Cupboard'], status: 'full' },
+      { id: uuid('hr100000-0000-', 8), room_number: '201', block: 'B', floor: 2, capacity: 4, occupied: 0, room_type: 'shared', amenities: ['Fan', 'Cupboard', 'Study Table'], status: 'maintenance' },
+    ];
+    await supabase.from('hostel_rooms').insert(hostelRooms);
+
+    // ── Step 27: Hostel Allocations ──────────────────────
+    const hostelAllocations: {
+      room_id: string; student_id: string; allocated_date: string;
+      mess_opted: boolean; emergency_contact: string; status: string;
+    }[] = [];
+    let allocIdx = 0;
+    for (const room of hostelRooms) {
+      if (room.status === 'maintenance') continue;
+      for (let i = 0; i < room.occupied && allocIdx < activeStudentIds.length; i++) {
+        hostelAllocations.push({
+          room_id: room.id,
+          student_id: activeStudentIds[allocIdx],
+          allocated_date: '2025-04-07',
+          mess_opted: Math.random() < 0.8,
+          emergency_contact: `+91 98${String(Math.floor(Math.random() * 100000000)).padStart(8, '0')}`,
+          status: 'active',
+        });
+        allocIdx++;
+      }
+    }
+    await supabase.from('hostel_allocations').insert(hostelAllocations);
+
     // ── Summary ────────────────────────────────────────────
     const totalPaid = feePayments.filter(f => f.status === 'paid').reduce((s, f) => s + f.amount_paid, 0);
     const attPresent = attendance.filter(a => a.status === 'present' || a.status === 'late').length;
@@ -994,6 +1029,8 @@ Each student may register for a maximum of 3 events. Forms available with your P
         inventory_items: inventoryItems.length,
         payroll_records: payrollRecords.length,
         messages: messagesList.length,
+        hostel_rooms: hostelRooms.length,
+        hostel_allocations: hostelAllocations.length,
       },
     });
   } catch (error) {

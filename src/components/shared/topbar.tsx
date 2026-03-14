@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import type { Profile } from '@/types/database';
 import { useTheme } from './theme-provider';
+import { useLanguage } from '@/lib/i18n/language-context';
+import type { TranslationKey } from '@/lib/i18n/translations';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
@@ -34,30 +36,34 @@ import {
   Library,
   CalendarDays,
   Bus,
+  Building2,
   Package,
   Wallet,
   MessageSquare,
+  Brain,
 } from 'lucide-react';
 
 const navItems = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: ['admin', 'teacher', 'parent'] },
-  { href: '/students', label: 'Students', icon: Users, roles: ['admin', 'teacher', 'parent'] },
-  { href: '/teachers', label: 'Teachers', icon: UserCog, roles: ['admin'] },
-  { href: '/attendance', label: 'Attendance', icon: ClipboardCheck, roles: ['admin', 'teacher', 'parent'] },
-  { href: '/timetable', label: 'Timetable', icon: Calendar, roles: ['admin', 'teacher', 'parent'] },
-  { href: '/grades', label: 'Grades', icon: BookOpen, roles: ['admin', 'teacher', 'parent'] },
-  { href: '/examinations', label: 'Exams', icon: FileText, roles: ['admin', 'teacher'] },
-  { href: '/fees', label: 'Fees', icon: CreditCard, roles: ['admin', 'parent'] },
-  { href: '/admissions', label: 'Admissions', icon: UserPlus, roles: ['admin'] },
-  { href: '/library', label: 'Library', icon: Library, roles: ['admin', 'teacher', 'parent'] },
-  { href: '/messages', label: 'Messages', icon: MessageSquare, roles: ['admin', 'teacher', 'parent'] },
-  { href: '/announcements', label: 'Announcements', icon: Megaphone, roles: ['admin', 'teacher', 'parent'] },
-  { href: '/events', label: 'Events', icon: CalendarDays, roles: ['admin', 'teacher', 'parent'] },
-  { href: '/transport', label: 'Transport', icon: Bus, roles: ['admin', 'parent'] },
-  { href: '/inventory', label: 'Inventory', icon: Package, roles: ['admin'] },
-  { href: '/payroll', label: 'Payroll', icon: Wallet, roles: ['admin'] },
-  { href: '/reports', label: 'Reports', icon: BarChart3, roles: ['admin', 'teacher'] },
-  { href: '/settings', label: 'Settings', icon: Settings, roles: ['admin', 'teacher', 'parent'] },
+  { href: '/dashboard', labelKey: 'dashboard' as TranslationKey, icon: LayoutDashboard, roles: ['admin', 'teacher', 'parent'] },
+  { href: '/students', labelKey: 'students' as TranslationKey, icon: Users, roles: ['admin', 'teacher', 'parent'] },
+  { href: '/teachers', labelKey: 'teachers' as TranslationKey, icon: UserCog, roles: ['admin'] },
+  { href: '/attendance', labelKey: 'attendance' as TranslationKey, icon: ClipboardCheck, roles: ['admin', 'teacher', 'parent'] },
+  { href: '/timetable', labelKey: 'timetable' as TranslationKey, icon: Calendar, roles: ['admin', 'teacher', 'parent'] },
+  { href: '/grades', labelKey: 'grades' as TranslationKey, icon: BookOpen, roles: ['admin', 'teacher', 'parent'] },
+  { href: '/examinations', labelKey: 'exams' as TranslationKey, icon: FileText, roles: ['admin', 'teacher'] },
+  { href: '/fees', labelKey: 'fees' as TranslationKey, icon: CreditCard, roles: ['admin', 'parent'] },
+  { href: '/admissions', labelKey: 'admissions' as TranslationKey, icon: UserPlus, roles: ['admin'] },
+  { href: '/library', labelKey: 'library' as TranslationKey, icon: Library, roles: ['admin', 'teacher', 'parent'] },
+  { href: '/messages', labelKey: 'messages' as TranslationKey, icon: MessageSquare, roles: ['admin', 'teacher', 'parent'] },
+  { href: '/announcements', labelKey: 'announcements' as TranslationKey, icon: Megaphone, roles: ['admin', 'teacher', 'parent'] },
+  { href: '/events', labelKey: 'events' as TranslationKey, icon: CalendarDays, roles: ['admin', 'teacher', 'parent'] },
+  { href: '/transport', labelKey: 'transport' as TranslationKey, icon: Bus, roles: ['admin', 'parent'] },
+  { href: '/hostel', labelKey: 'hostel' as TranslationKey, icon: Building2, roles: ['admin'] },
+  { href: '/inventory', labelKey: 'inventory' as TranslationKey, icon: Package, roles: ['admin'] },
+  { href: '/payroll', labelKey: 'payroll' as TranslationKey, icon: Wallet, roles: ['admin'] },
+  { href: '/analytics', labelKey: 'analytics' as TranslationKey, icon: Brain, roles: ['admin', 'teacher'] },
+  { href: '/reports', labelKey: 'reports' as TranslationKey, icon: BarChart3, roles: ['admin', 'teacher'] },
+  { href: '/settings', labelKey: 'settings' as TranslationKey, icon: Settings, roles: ['admin', 'teacher', 'parent'] },
 ];
 
 interface TopbarProps {
@@ -67,6 +73,7 @@ interface TopbarProps {
 export function Topbar({ profile }: TopbarProps) {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
+  const { locale, setLocale, t } = useLanguage();
   const pathname = usePathname();
   const supabase = createClient();
 
@@ -122,7 +129,7 @@ export function Topbar({ profile }: TopbarProps) {
                     )}
                   >
                     <item.icon className="h-[18px] w-[18px]" />
-                    {item.label}
+                    {t(item.labelKey)}
                   </Link>
                 );
               })}
@@ -137,6 +144,14 @@ export function Topbar({ profile }: TopbarProps) {
           <Sparkles className="h-3 w-3" />
           {profile.role}
         </div>
+
+        {/* Language toggle */}
+        <button
+          onClick={() => setLocale(locale === 'en' ? 'hi' : 'en')}
+          className="h-8 w-8 rounded-xl flex items-center justify-center hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground text-xs font-semibold"
+        >
+          {locale === 'en' ? 'हि' : 'EN'}
+        </button>
 
         {/* Theme toggle */}
         <button

@@ -12,6 +12,14 @@ jest.mock('next/navigation', () => ({
   usePathname: () => '/settings',
 }));
 
+jest.mock('@/lib/i18n/language-context', () => ({
+  useLanguage: () => ({
+    locale: 'en',
+    setLocale: jest.fn(),
+    t: (key: string) => key,
+  }),
+}));
+
 describe('SettingsPage', () => {
   it('renders settings page with title', () => {
     render(<SettingsPage />);
