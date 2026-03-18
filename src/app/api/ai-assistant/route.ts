@@ -1,11 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { createClient } from '@supabase/supabase-js';
+import { z } from 'zod';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 30;
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+const AssistantRequestSchema = z.object({
+  message: z.string().min(1).max(2000),
+  history: z.array(z.object({
+    role: z.enum(['user', 'assistant']),
+    content: z.string(),
+  })).optional().default([]),
+});
 
 async function getSchoolContext() {
   const supabase = createClient(
@@ -45,7 +54,17 @@ async function getSchoolContext() {
 
 export async function POST(req: NextRequest) {
   try {
-    const { message, history } = await req.json();
+    const raw = await req.json();
+    const parsed = AssistantRequestSchema.safeParse(raw);
+
+    if (!parsed.success) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid request data', details: parsed.error.flatten() },
+        { status: 400 }
+      );
+    }
+
+    const { message, history } = parsed.data;
 
     const context = await getSchoolContext();
 

@@ -36,3 +36,9 @@ yarn-error.log*
 next-env.d.ts
 playwright-report/
 test-results/
+
+# supabase local
+supabase/.temp/
+
+# local media
+video/

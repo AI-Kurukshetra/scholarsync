@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
+import { z } from 'zod';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
@@ -8,30 +9,46 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-interface StudentData {
-  name: string;
-  class: string;
-  attendanceRate: number;
-  avgGrade: number;
-  riskScore: number;
-  riskLevel: string;
-}
+const StudentDataSchema = z.object({
+  name: z.string().min(1),
+  class: z.string().min(1),
+  attendanceRate: z.number().min(0).max(100),
+  avgGrade: z.number().min(0).max(100),
+  riskScore: z.number().min(0).max(1),
+  riskLevel: z.enum(['low', 'medium', 'high']),
+});
 
-interface AnalyticsRequest {
-  students: StudentData[];
-  classPerformance: { name: string; attendance: number; grades: number; atRisk: number; students: number }[];
-  summary: {
-    totalStudents: number;
-    atRisk: number;
-    watchList: number;
-    onTrack: number;
-    avgAttendance: number;
-  };
-}
+const AnalyticsRequestSchema = z.object({
+  students: z.array(StudentDataSchema),
+  classPerformance: z.array(z.object({
+    name: z.string(),
+    attendance: z.number(),
+    grades: z.number(),
+    atRisk: z.number().int().min(0),
+    students: z.number().int().min(0),
+  })),
+  summary: z.object({
+    totalStudents: z.number().int().min(0),
+    atRisk: z.number().int().min(0),
+    watchList: z.number().int().min(0),
+    onTrack: z.number().int().min(0),
+    avgAttendance: z.number().min(0).max(100),
+  }),
+});
 
 export async function POST(req: NextRequest) {
   try {
-    const body: AnalyticsRequest = await req.json();
+    const raw = await req.json();
+    const result = AnalyticsRequestSchema.safeParse(raw);
+
+    if (!result.success) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid request data', details: result.error.flatten() },
+        { status: 400 }
+      );
+    }
+
+    const body = result.data;
     const { students, classPerformance, summary } = body;
 
     // Build concise data summary for GPT

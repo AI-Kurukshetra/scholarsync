@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import type { Profile } from '@/types/database';
 import { useTheme } from './theme-provider';
@@ -17,11 +17,16 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Moon, Sun, LogOut, Settings, GraduationCap, Sparkles } from 'lucide-react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import {
+  Menu,
+  Moon,
+  Sun,
+  LogOut,
+  Settings,
+  GraduationCap,
+  Sparkles,
   LayoutDashboard,
   Users,
   ClipboardCheck,
