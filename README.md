@@ -24,6 +24,25 @@ ScholarSync unifies **23+ modules** under one platform with **AI-powered analyti
 
 ---
 
+## Screenshots
+
+### Landing Page
+![Landing Page](docs/screenshots/landing-page.png)
+
+### Feature Suite
+![Features](docs/screenshots/features.png)
+
+### Admin Dashboard
+![Dashboard](docs/screenshots/dashboard.png)
+
+### AI-Powered Analytics
+![AI Analytics](docs/screenshots/ai-analytics.png)
+
+### Reports Module
+![Reports](docs/screenshots/reports.png)
+
+---
+
 ## Architecture
 
 ```mermaid
