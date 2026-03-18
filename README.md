@@ -6,7 +6,11 @@
   <img src="https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css" alt="Tailwind" />
 </p>
 
-# ScholarSync - AI-Powered School Management Platform
+<h1 align="center">ScholarSync - AI-Powered School Management Platform</h1>
+
+<p align="center">
+  <a href="https://scholarsync-three.vercel.app/"><strong>Live Demo</strong></a>
+</p>
 
 **ScholarSync** is a comprehensive, AI-enhanced school management system built for the modern education ecosystem. It streamlines administrative workflows, empowers educators with data-driven insights, and keeps parents connected — all from a single platform.
 
