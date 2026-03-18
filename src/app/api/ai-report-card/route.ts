@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
 
     if (!parsed.success) {
       return NextResponse.json(
-        { success: false, error: 'Invalid request', details: parsed.error.flatten() },
+        { success: false, error: 'Invalid student ID. Please select a valid student.', details: parsed.error.flatten() },
         { status: 400 }
       );
     }

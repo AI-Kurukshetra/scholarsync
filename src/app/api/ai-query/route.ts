@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
 
     if (!parsed.success) {
       return NextResponse.json(
-        { success: false, error: 'Invalid request', details: parsed.error.flatten() },
+        { success: false, error: 'Please enter a question (3-500 characters).', details: parsed.error.flatten() },
         { status: 400 }
       );
     }

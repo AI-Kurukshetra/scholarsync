@@ -45,11 +45,14 @@ export default function AIReportCardPage() {
 
   useEffect(() => {
     async function fetchStudents() {
-      const { data } = await supabase
+      const { data, error: fetchError } = await supabase
         .from('students')
         .select('id, first_name, last_name, class:classes(name)')
         .eq('status', 'active')
         .order('first_name');
+      if (fetchError) {
+        setError('Failed to load students: ' + fetchError.message);
+      }
       setStudents(data || []);
     }
     fetchStudents();
