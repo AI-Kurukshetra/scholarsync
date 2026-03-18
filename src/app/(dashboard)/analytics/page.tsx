@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/table';
 import { Brain, AlertTriangle, TrendingUp, Award, Target, Users } from 'lucide-react';
 import { AnalyticsCharts } from './analytics-charts';
+import { AIInsights } from './ai-insights';
 
 interface StudentPerformance {
   id: string;
@@ -171,6 +172,28 @@ export default async function AnalyticsPage() {
             <AnalyticsCharts type="pie" data={riskDistribution} />
           </CardContent>
         </Card>
+      </div>
+
+      {/* AI-Powered Insights */}
+      <div className="grid gap-4 lg:grid-cols-2">
+        <AIInsights
+          students={studentAnalytics.slice(0, 20).map(s => ({
+            name: `${s.first_name} ${s.last_name}`,
+            class: s.class?.name || '-',
+            attendanceRate: s.attendanceRate,
+            avgGrade: s.avgGrade,
+            riskScore: s.riskScore,
+            riskLevel: s.riskLevel,
+          }))}
+          classPerformance={classPerformance}
+          summary={{
+            totalStudents: studentAnalytics.length,
+            atRisk: atRiskCount,
+            watchList: watchCount,
+            onTrack: onTrackCount,
+            avgAttendance: avgAttendance,
+          }}
+        />
       </div>
 
       {/* At-Risk Students Table */}

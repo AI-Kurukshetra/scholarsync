@@ -20,6 +20,9 @@ export const translations = {
     payroll: 'Payroll',
     analytics: 'AI Analytics',
     reports: 'Reports',
+    notifications: 'Notifications',
+    certificates: 'Certificates',
+    auditLogs: 'Audit Logs',
     settings: 'Settings',
     // Dashboard
     welcomeBack: 'Welcome back',
@@ -88,6 +91,9 @@ export const translations = {
     payroll: 'वेतन',
     analytics: 'विश्लेषण',
     reports: 'रिपोर्ट',
+    notifications: 'सूचनाएं',
+    certificates: 'प्रमाणपत्र',
+    auditLogs: 'ऑडिट लॉग',
     settings: 'सेटिंग्स',
     // Dashboard
     welcomeBack: 'वापस स्वागत है',

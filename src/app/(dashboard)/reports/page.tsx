@@ -1,7 +1,7 @@
 import { requireAuth } from '@/lib/auth';
 import { PageHeader } from '@/components/shared/page-header';
 import { Card, CardContent } from '@/components/ui/card';
-import { ClipboardCheck, BookOpen, CreditCard, ChevronRight, Users, FileText, UserPlus, Library, Bus, Wallet, Download } from 'lucide-react';
+import { ClipboardCheck, BookOpen, CreditCard, ChevronRight, Users, FileText, UserPlus, Library, Bus, Wallet, Download, Upload } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
@@ -77,12 +77,20 @@ export default async function ReportsPage() {
   return (
     <>
       <PageHeader title="Reports" description="Access various school reports">
-        <Button variant="outline" size="sm" asChild>
-          <Link href="/reports/export">
-            <Download className="mr-1.5 h-3.5 w-3.5" />
-            Export Data
-          </Link>
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" asChild>
+            <Link href="/reports/import">
+              <Upload className="mr-1.5 h-3.5 w-3.5" />
+              Import Data
+            </Link>
+          </Button>
+          <Button variant="outline" size="sm" asChild>
+            <Link href="/reports/export">
+              <Download className="mr-1.5 h-3.5 w-3.5" />
+              Export Data
+            </Link>
+          </Button>
+        </div>
       </PageHeader>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

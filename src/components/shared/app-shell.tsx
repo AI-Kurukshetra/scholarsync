@@ -5,6 +5,7 @@ import type { Profile } from '@/types/database';
 import { LanguageProvider } from '@/lib/i18n/language-context';
 import { Sidebar } from './sidebar';
 import { Topbar } from './topbar';
+import { AIAssistant } from './ai-assistant';
 
 interface AppShellProps {
   profile: Profile;
@@ -28,6 +29,7 @@ export function AppShell({ profile, children }: AppShellProps) {
             {children}
           </main>
         </div>
+        <AIAssistant />
       </div>
     </LanguageProvider>
   );
