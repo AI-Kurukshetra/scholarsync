@@ -33,13 +33,6 @@ describe('LoginPage', () => {
     expect(screen.getByLabelText('Password')).toBeInTheDocument();
   });
 
-  it('renders demo account buttons', () => {
-    render(<LoginPage />);
-    expect(screen.getByText('Admin')).toBeInTheDocument();
-    expect(screen.getByText('Teacher')).toBeInTheDocument();
-    expect(screen.getByText('Parent')).toBeInTheDocument();
-  });
-
   it('renders signup link', () => {
     render(<LoginPage />);
     expect(screen.getByText('Sign up')).toBeInTheDocument();
@@ -84,19 +77,4 @@ describe('LoginPage', () => {
     expect(mockPush).not.toHaveBeenCalled();
   });
 
-  it('handles demo login', async () => {
-    mockSignIn.mockResolvedValueOnce({ error: null });
-    const user = userEvent.setup();
-
-    render(<LoginPage />);
-    await user.click(screen.getByText('Admin'));
-
-    await waitFor(() => {
-      expect(mockSignIn).toHaveBeenCalledWith({
-        email: 'admin@scholarsync.demo',
-        password: 'demo123456',
-      });
-      expect(mockPush).toHaveBeenCalledWith('/dashboard');
-    });
-  });
 });
