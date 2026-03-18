@@ -9,7 +9,8 @@
 <h1 align="center">ScholarSync - AI-Powered School Management Platform</h1>
 
 <p align="center">
-  <a href="https://scholarsync-three.vercel.app/"><strong>Live Demo</strong></a>
+  <a href="https://scholarsync-three.vercel.app/"><strong>Live Demo</strong></a> &nbsp;|&nbsp;
+  <a href="https://drive.google.com/file/d/1Xts5hv3hWxGKITVaYW2oTteGMZHmXNuT/view?usp=drive_link"><strong>Demo Video</strong></a>
 </p>
 
 **ScholarSync** is a comprehensive, AI-enhanced school management system built for the modern education ecosystem. It streamlines administrative workflows, empowers educators with data-driven insights, and keeps parents connected — all from a single platform.
