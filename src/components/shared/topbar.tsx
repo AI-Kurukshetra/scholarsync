@@ -49,6 +49,9 @@ import {
   Bell,
   Award,
   Shield,
+  Database,
+  FileText as FileReport,
+  ShieldAlert,
 } from 'lucide-react';
 
 const navItems = [
@@ -72,6 +75,9 @@ const navItems = [
   { href: '/notifications', labelKey: 'notifications' as TranslationKey, icon: Bell, roles: ['admin', 'teacher', 'parent'] },
   { href: '/certificates', labelKey: 'certificates' as TranslationKey, icon: Award, roles: ['admin', 'teacher'] },
   { href: '/analytics', labelKey: 'analytics' as TranslationKey, icon: Brain, roles: ['admin', 'teacher'] },
+  { href: '/ai-query', labelKey: 'aiQuery' as TranslationKey, icon: Database, roles: ['admin'] },
+  { href: '/ai-report-card', labelKey: 'aiReportCard' as TranslationKey, icon: FileReport, roles: ['admin', 'teacher'] },
+  { href: '/ai-anomalies', labelKey: 'aiAnomalies' as TranslationKey, icon: ShieldAlert, roles: ['admin'] },
   { href: '/reports', labelKey: 'reports' as TranslationKey, icon: BarChart3, roles: ['admin', 'teacher'] },
   { href: '/audit-logs', labelKey: 'auditLogs' as TranslationKey, icon: Shield, roles: ['admin'] },
   { href: '/settings', labelKey: 'settings' as TranslationKey, icon: Settings, roles: ['admin', 'teacher', 'parent'] },

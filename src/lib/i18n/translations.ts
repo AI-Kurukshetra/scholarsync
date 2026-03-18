@@ -23,6 +23,9 @@ export const translations = {
     notifications: 'Notifications',
     certificates: 'Certificates',
     auditLogs: 'Audit Logs',
+    aiQuery: 'AI Query',
+    aiReportCard: 'AI Report Card',
+    aiAnomalies: 'AI Anomalies',
     settings: 'Settings',
     // Dashboard
     welcomeBack: 'Welcome back',
@@ -94,6 +97,9 @@ export const translations = {
     notifications: 'सूचनाएं',
     certificates: 'प्रमाणपत्र',
     auditLogs: 'ऑडिट लॉग',
+    aiQuery: 'AI क्वेरी',
+    aiReportCard: 'AI रिपोर्ट कार्ड',
+    aiAnomalies: 'AI विसंगतियाँ',
     settings: 'सेटिंग्स',
     // Dashboard
     welcomeBack: 'वापस स्वागत है',

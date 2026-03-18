@@ -39,7 +39,10 @@ export async function updateSession(request: NextRequest) {
     request.nextUrl.pathname.startsWith('/fees') ||
     request.nextUrl.pathname.startsWith('/announcements') ||
     request.nextUrl.pathname.startsWith('/reports') ||
-    request.nextUrl.pathname.startsWith('/settings');
+    request.nextUrl.pathname.startsWith('/settings') ||
+    request.nextUrl.pathname.startsWith('/ai-query') ||
+    request.nextUrl.pathname.startsWith('/ai-report-card') ||
+    request.nextUrl.pathname.startsWith('/ai-anomalies');
 
   if (!user && isDashboardPage) {
     const url = request.nextUrl.clone();

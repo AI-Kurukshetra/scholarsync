@@ -59,6 +59,9 @@ graph TB
         MW[Auth Middleware]
         AI_Analytics["/api/ai-analytics"]
         AI_Assistant["/api/ai-assistant"]
+        AI_Query["/api/ai-query — NL→SQL"]
+        AI_Report["/api/ai-report-card"]
+        AI_Anomaly["/api/ai-anomalies"]
         Seed["/api/seed"]
     end
 
@@ -94,18 +97,23 @@ graph TB
 | **Intelligence** | AI Analytics Dashboard, AI Assistant Chatbot, Reports & Data Export |
 | **Security** | Audit Logs, Role-Based Access Control, Row-Level Security |
 
-### AI-Powered Analytics
+### AI-Powered Analytics (5 AI Features)
 
-- **Student Risk Scoring** — Weighted algorithm (40% attendance, 60% grades) auto-classifies students as Low/Medium/High risk
-- **Predictive Insights** — GPT-4o-mini analyzes school-wide data to predict attendance trends and academic outlook
-- **Personalized Interventions** — AI generates specific, actionable recommendations per at-risk student
-- **Executive Summaries** — One-click AI-generated reports for administrators
+1. **Student Risk Scoring** — Weighted algorithm (40% attendance, 60% grades) auto-classifies students as Low/Medium/High risk with predictive trend analysis
+2. **Natural Language Database Query** — Admins type questions in plain English (e.g., "show students with attendance below 75%") and AI generates SQL, executes it safely (read-only), and returns results in a table. Includes SQL preview and query explanation.
+3. **AI Report Card Generator** — Select any student and AI generates a personalized narrative report card with per-subject remarks, strengths, areas for improvement, GPA calculation, teacher recommendations, and parent notes — all based on actual grades, attendance, and exam data.
+4. **Anomaly Detection Engine** — Proactively scans 30 days of data to detect unusual patterns: sudden attendance drops, failing grades, overdue fees, and overdue library books. AI categorizes alerts by urgency (critical/warning/info) and recommends immediate actions.
+5. **Context-Aware AI Chatbot** — Pulls live school data (students, teachers, events, announcements) for multi-turn conversations with school-specific context.
 
-### AI Assistant Chatbot
+### How AI is Integrated
 
-- Context-aware: pulls live school data (students, teachers, events, announcements)
-- Multi-turn conversation with 6-message history
-- Helps navigate modules and answers school operations questions
+```
+User Question → AI generates SQL → Safety validation → Read-only execution → Results
+Student Data  → Risk algorithm   → GPT-4o analysis  → Personalized insights
+30-day scan   → Pattern detection → GPT-4o analysis  → Prioritized alerts
+```
+
+The AI doesn't just summarize — it **understands the database schema**, **generates safe queries**, **detects anomalies proactively**, and **creates personalized documents** from real data.
 
 ### Security & Access Control
 
@@ -243,7 +251,10 @@ src/
 │   │   └── ...              # 16 more modules
 │   └── api/
 │       ├── ai-analytics/    # GPT-powered risk analysis
-│       └── ai-assistant/    # Context-aware chatbot
+│       ├── ai-assistant/    # Context-aware chatbot
+│       ├── ai-query/        # Natural language → SQL engine
+│       ├── ai-report-card/  # AI narrative report card generator
+│       └── ai-anomalies/    # Proactive anomaly detection
 ├── components/
 │   ├── shared/              # App shell, sidebar, topbar, AI widget
 │   └── ui/                  # shadcn component library
@@ -306,6 +317,74 @@ Context-aware chatbot that pulls live school data.
 {
   "success": true,
   "reply": "Based on current data, 12 out of 150 students are flagged as at-risk..."
+}
+```
+
+### POST `/api/ai-query`
+
+Natural language to SQL — converts plain English questions into safe, read-only database queries.
+
+**Request:**
+```json
+{
+  "question": "Show students with attendance below 75%"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [{ "student_name": "...", "attendance_rate": 68 }],
+  "explanation": "This query finds all active students whose attendance rate is below 75%",
+  "query": "SELECT ... FROM students JOIN attendance ... LIMIT 50",
+  "rowCount": 5
+}
+```
+
+### POST `/api/ai-report-card`
+
+Generates AI-written personalized narrative report cards from actual student data.
+
+**Request:**
+```json
+{
+  "studentId": "uuid-of-student"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "student": { "name": "Alice Smith", "class": "Class 10A" },
+  "stats": { "attendanceRate": 92, "subjectsCount": 6, "examsCount": 3 },
+  "reportCard": {
+    "overallGrade": "A-",
+    "gpa": "3.7",
+    "narrative": "Alice has demonstrated consistent academic performance...",
+    "strengths": ["Strong mathematical aptitude", "Excellent attendance"],
+    "areasForImprovement": ["Could participate more in class discussions"],
+    "teacherRecommendation": "...",
+    "parentNote": "..."
+  }
+}
+```
+
+### GET `/api/ai-anomalies`
+
+Proactively scans 30 days of data to detect anomalies across attendance, grades, fees, and library.
+
+**Response:**
+```json
+{
+  "success": true,
+  "rawAnomalies": { "attendanceDrops": 3, "lowGrades": 5, "overdueFees": 2, "overdueBooks": 1, "total": 11 },
+  "analysis": {
+    "criticalAlerts": [{ "title": "...", "urgency": "critical", "recommendation": "..." }],
+    "summary": "AI-generated executive summary of detected anomalies",
+    "immediateActions": ["Action 1", "Action 2"]
+  }
 }
 ```
 
